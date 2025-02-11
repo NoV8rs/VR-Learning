@@ -7,14 +7,19 @@ using UnityEngine.XR.Interaction.Toolkit.Interactables;
 public class SwitchLever : XRBaseInteractable // Inherit from XRBaseInteractable to use the XR Interaction Toolkit
 {
     private Quaternion startRotation; // The initial rotation of the lever
-    private bool isOn = false; // The state of the lever
+    public bool isOn = false; // The state of the lever
     
-    public GameObject targetObject;
+    public GameObject[] targetObject;
 
     protected override void Awake()
     {
         base.Awake();
         startRotation = transform.localRotation;
+    }
+    
+    private void Start()
+    {
+        SetTargetObjectsActive(false);
     }
 
     protected override void OnSelectEntered(SelectEnterEventArgs args)
@@ -29,16 +34,39 @@ public class SwitchLever : XRBaseInteractable // Inherit from XRBaseInteractable
         if (isOn)
         {
             // Rotate the lever to the "on" position
-            transform.localRotation = startRotation * Quaternion.Euler(225, 0, 0);
+            transform.localRotation = startRotation * Quaternion.Euler(5, 0, 0);
             // Activate the target object
-            targetObject.SetActive(true);
+            if (targetObject != null)
+            {
+                foreach (GameObject obj in targetObject)
+                {
+                    obj.SetActive(true);
+                }
+            }
         }
         else
         {
             // Rotate the lever back to the "off" position
             transform.localRotation = startRotation;
             // Deactivate the target object
-            targetObject.SetActive(false);
+            if (targetObject != null)
+            {
+                foreach (GameObject obj in targetObject)
+                {
+                    obj.SetActive(false);
+                }
+            }
+        }
+    }
+    
+    private void SetTargetObjectsActive(bool isActive)
+    {
+        if (targetObject != null)
+        {
+            foreach (GameObject obj in targetObject)
+            {
+                obj.SetActive(isActive);
+            }
         }
     }
 }
